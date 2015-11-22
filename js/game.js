@@ -380,16 +380,85 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          //console.log('you have won!');
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.fillRect(250, 100, 200, 100);
+          this.ctx.fillStyle = '#000000';
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillText('Старый, да ты выйграл!', 260, 110);
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          //console.log('you have failed!');
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.fillRect(250, 100, 200, 100);
+          this.ctx.fillStyle = '#000000';
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillText('Старый, да ты проиграл!', 260, 110);
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          //console.log('game is on pause!');
+          this.ctx.fillStyle = '#ffffff';
+          this.ctx.fillRect(250, 100, 200, 100);
+          this.ctx.fillStyle = '#000000';
+          this.ctx.font = '16px PT Mono';
+          this.ctx.fillText('Стопэ! Пауза!', 260, 110);
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          var message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть файербол: SHIFT.';
+          drawMessage(this.ctx, message);
+
+          function drawMessage(context, message) {
+            // Рисуем многоугольник-тень
+            context.beginPath();
+            context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            context.moveTo(340, 40);
+            context.lineTo(320, 190);
+            context.lineTo(620, 180);
+            context.lineTo(640, 40);
+            context.closePath();
+            context.fill();
+
+            // Рисуем белый многоугольник
+            context.beginPath();
+            context.fillStyle = '#ffffff';
+            context.moveTo(330, 30);
+            context.lineTo(310, 180);
+            context.lineTo(610, 170);
+            context.lineTo(630, 30);
+            context.closePath();
+            context.fill();
+
+            // Печатаем текст с переносом
+            var maxWidth = 290;
+            var lineHeight = 26;
+            var marginLeft = 350;
+            var marginTop = 60;
+            var text = message;
+
+            context.font = '16px PT Mono';
+            context.fillStyle = '#000000';
+            wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight);
+
+            function wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight) {
+              var words = text.split(' ');
+              var countWords = words.length;
+              var line = '';
+
+              for (var n = 0; n < countWords; n++) {
+                var testLine = line + words[n] + " ";
+                var testWidth = context.measureText(testLine).width;
+                if (testWidth > maxWidth) {
+                  context.fillText(line, marginLeft, marginTop);
+                  line = words[n] + ' ';
+                  marginTop += lineHeight;
+                } else {
+                  line = testLine;
+                }
+              }
+              context.fillText(line, marginLeft, marginTop);
+            }
+            }
+
           break;
       }
     },
