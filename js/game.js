@@ -258,6 +258,45 @@
     this._pauseListener = this._pauseListener.bind(this);
   };
 
+  /**
+  * Ф-ция для отрисовки фона сообщения
+  */
+  var drawFigure = function(context, baseX, baseY, baseWidth, color) {
+    context.beginPath();
+    context.fillStyle = color;
+    context.moveTo(baseX, baseY);
+    context.lineTo(baseX - 20, baseY + 150);
+    context.lineTo(baseX - 20 + baseWidth, baseY + 140);
+    context.lineTo(baseX + baseWidth, baseY);
+    context.closePath();
+    context.fill();
+  };
+
+  /**
+  * Ф-ция для отрисовки сообщения
+  */
+  var drawMessage = function(context, message, baseX, baseY, baseWidth) {
+    var lineHeight = 26;
+    var words = message.split(' ');
+    var line = '';
+
+    context.font = '16px PT Mono';
+    context.fillStyle = '#000000';
+
+    for (var n = 0; n < words.length; n++) {
+      var testLine = line + words[n] + " ";
+      var testWidth = context.measureText(testLine).width;
+      if (testWidth > baseWidth) {
+        context.fillText(line, baseX, baseY);
+        line = words[n] + ' ';
+        baseY += lineHeight;
+      } else {
+        line = testLine;
+      }
+    }
+    context.fillText(line, baseX, baseY);
+  };
+
   Game.prototype = {
     /**
      * Текущий уровень игры.
@@ -380,85 +419,40 @@
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          //console.log('you have won!');
-          this.ctx.fillStyle = '#ffffff';
-          this.ctx.fillRect(250, 100, 200, 100);
-          this.ctx.fillStyle = '#000000';
-          this.ctx.font = '16px PT Mono';
-          this.ctx.fillText('Старый, да ты выйграл!', 260, 110);
+          var message = 'Старый, да ты выйграл! Ты красавчик! SPACE для рестарта.';
+          var startX = 350;
+          var startY = 30;
+          var width = 300;
+          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 10);
           break;
         case Verdict.FAIL:
-          //console.log('you have failed!');
-          this.ctx.fillStyle = '#ffffff';
-          this.ctx.fillRect(250, 100, 200, 100);
-          this.ctx.fillStyle = '#000000';
-          this.ctx.font = '16px PT Mono';
-          this.ctx.fillText('Старый, да ты проиграл!', 260, 110);
+          var message = 'Старый, да ты проиграл! Не очень! SPACE для рестарта.';
+          var startX = 350;
+          var startY = 30;
+          var width = 300;
+          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 10);
           break;
         case Verdict.PAUSE:
-          //console.log('game is on pause!');
-          this.ctx.fillStyle = '#ffffff';
-          this.ctx.fillRect(250, 100, 200, 100);
-          this.ctx.fillStyle = '#000000';
-          this.ctx.font = '16px PT Mono';
-          this.ctx.fillText('Стопэ! Пауза!', 260, 110);
+          var message = 'Пауза. SPACE для продолжения.';
+          var startX = 350;
+          var startY = 30;
+          var width = 300;
+          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 10);
           break;
         case Verdict.INTRO:
-          var message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть файербол: SHIFT.';
-          drawMessage(this.ctx, message);
-
-          function drawMessage(context, message) {
-            // Рисуем многоугольник-тень
-            context.beginPath();
-            context.fillStyle = 'rgba(0, 0, 0, 0.7)';
-            context.moveTo(340, 40);
-            context.lineTo(320, 190);
-            context.lineTo(620, 180);
-            context.lineTo(640, 40);
-            context.closePath();
-            context.fill();
-
-            // Рисуем белый многоугольник
-            context.beginPath();
-            context.fillStyle = '#ffffff';
-            context.moveTo(330, 30);
-            context.lineTo(310, 180);
-            context.lineTo(610, 170);
-            context.lineTo(630, 30);
-            context.closePath();
-            context.fill();
-
-            // Печатаем текст с переносом
-            var maxWidth = 290;
-            var lineHeight = 26;
-            var marginLeft = 350;
-            var marginTop = 60;
-            var text = message;
-
-            context.font = '16px PT Mono';
-            context.fillStyle = '#000000';
-            wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight);
-
-            function wrapText(context, text, marginLeft, marginTop, maxWidth, lineHeight) {
-              var words = text.split(' ');
-              var countWords = words.length;
-              var line = '';
-
-              for (var n = 0; n < countWords; n++) {
-                var testLine = line + words[n] + " ";
-                var testWidth = context.measureText(testLine).width;
-                if (testWidth > maxWidth) {
-                  context.fillText(line, marginLeft, marginTop);
-                  line = words[n] + ' ';
-                  marginTop += lineHeight;
-                } else {
-                  line = testLine;
-                }
-              }
-              context.fillText(line, marginLeft, marginTop);
-            }
-            }
-
+          var message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть огненный шар: SHIFT.';
+          var startX = 340;
+          var startY = 40;
+          var width = 300;
+          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 25);
           break;
       }
     },
