@@ -27,15 +27,7 @@
     var mark = form.querySelector('[name=review-mark]:checked');
     if (mark.value < 3) {
       text.setAttribute('required', '');
-
-      if (text.value != '') {
-        submit.removeAttribute('disabled', '');
-        textHint.classList.add('invisible');
-      } else {
-        submit.setAttribute('disabled', '');
-        textHint.classList.remove('invisible');
-      }
-
+      textHint.classList.remove('invisible');
     } else {
       text.removeAttribute('required', '');
       textHint.classList.add('invisible');
@@ -43,11 +35,21 @@
   }
 
   name.onchange = function() {
-    if (name.value != '') {
+    if (name.value !== '') {
       nameHint.classList.add('invisible');
       submit.removeAttribute('disabled', '');
     } else {
       nameHint.classList.remove('invisible');
+      submit.setAttribute('disabled', '');
+    }
+  }
+
+  text.onchange = function() {
+    if (!(text.setAttribute('required', '')) && (text.value !== '')) {
+      textHint.classList.add('invisible');
+      submit.removeAttribute('disabled', '');
+    } else {
+      textHint.classList.remove('invisible');
       submit.setAttribute('disabled', '');
     }
   }
