@@ -14,4 +14,42 @@
     evt.preventDefault();
     formContainer.classList.add('invisible');
   };
+
+  var form = document.querySelector('.review-form');
+  var markParent = form.querySelector('.review-form-group-mark');
+  var name = form.querySelector('#review-name');
+  var text = form.querySelector('#review-text');
+  var nameHint = form.querySelector('.review-fields-name');
+  var textHint = form.querySelector('.review-fields-text');
+  var submit = form.querySelector('.review-submit');
+
+  markParent.onchange = function() {
+    var mark = form.querySelector('[name=review-mark]:checked');
+    if (mark.value < 3) {
+      text.setAttribute('required', '');
+
+      if (text.value != '') {
+        submit.removeAttribute('disabled', '');
+        textHint.classList.add('invisible');
+      } else {
+        submit.setAttribute('disabled', '');
+        textHint.classList.remove('invisible');
+      }
+
+    } else {
+      text.removeAttribute('required', '');
+      textHint.classList.add('invisible');
+    }
+  }
+
+  name.onchange = function() {
+    if (name.value != '') {
+      nameHint.classList.add('invisible');
+      submit.removeAttribute('disabled', '');
+    } else {
+      nameHint.classList.remove('invisible');
+      submit.setAttribute('disabled', '');
+    }
+  }
+
 })();

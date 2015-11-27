@@ -279,6 +279,7 @@
     var lineHeight = 26;
     var words = message.split(' ');
     var line = '';
+    baseWidth = baseWidth - 25;
 
     context.font = '16px PT Mono';
     context.fillStyle = '#000000';
@@ -425,7 +426,7 @@
           var width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 10);
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
         case Verdict.FAIL:
           var message = 'Старый, да ты проиграл! Не очень! SPACE для рестарта.';
@@ -434,16 +435,16 @@
           var width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 10);
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
         case Verdict.PAUSE:
-          var message = 'Пауза. SPACE для продолжения.';
+          var message = 'Пауза. Нажми SPACE для продолжения.';
           var startX = 350;
           var startY = 30;
           var width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 10);
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
         case Verdict.INTRO:
           var message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть огненный шар: SHIFT.';
@@ -452,7 +453,7 @@
           var width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width - 25);
+          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
       }
     },
