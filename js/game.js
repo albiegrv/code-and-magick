@@ -285,7 +285,7 @@
     context.fillStyle = '#000000';
 
     for (var n = 0; n < words.length; n++) {
-      var testLine = line + words[n] + " ";
+      var testLine = line + words[n] + ' ';
       var testWidth = context.measureText(testLine).width;
       if (testWidth > baseWidth) {
         context.fillText(line, baseX, baseY);
@@ -429,28 +429,28 @@
           drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
         case Verdict.FAIL:
-          var message = 'Старый, да ты проиграл! Не очень! SPACE для рестарта.';
-          var startX = 350;
-          var startY = 30;
-          var width = 300;
+          message = 'Старый, да ты проиграл! Не очень! SPACE для рестарта.';
+          startX = 350;
+          startY = 30;
+          width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
           drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
         case Verdict.PAUSE:
-          var message = 'Пауза. Нажми SPACE для продолжения.';
-          var startX = 350;
-          var startY = 30;
-          var width = 300;
+          message = 'Пауза. Нажми SPACE для продолжения.';
+          startX = 350;
+          startY = 30;
+          width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
           drawMessage(this.ctx, message, startX + 10, startY + 20, width);
           break;
         case Verdict.INTRO:
-          var message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть огненный шар: SHIFT.';
-          var startX = 340;
-          var startY = 40;
-          var width = 300;
+          message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть огненный шар: SHIFT.';
+          startX = 340;
+          startY = 40;
+          width = 300;
           drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
           drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
           drawMessage(this.ctx, message, startX + 10, startY + 20, width);

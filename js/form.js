@@ -21,6 +21,21 @@
     evt.preventDefault();
     formContainer.classList.remove('invisible');
 
+    // Вставляем в поле "имя" значение из cookie
+    name.value = docCookies.getItem('review-name');
+
+    // Достаём значение "оценки" из cookie
+    // Находим радио-баттон с совпадающим значением
+    // И добавляем ему атрибут checked
+    var markFromCookie = docCookies.getItem('review-mark');
+    var marks = markParent.querySelectorAll('[name=review-mark');
+
+    for (var i = 0; i < marks.length; i++) {
+      if (marks[i].value === markFromCookie) {
+        marks[i].setAttribute('checked', '');
+      }
+    }
+
     validateForm();
   };
 
@@ -30,20 +45,30 @@
     formContainer.classList.add('invisible');
   };
 
-  // Событие - изменение поля ОЦЕНКА
-  markParent.onchange = function() {
-    validateForm();
-  }
+  // Событие - изменение поля "оценка"
+  markParent.onchange = validateForm;
 
-  // Событие - изменение поля ИМЯ
-  name.onkeyup = function() {
-    validateForm();
-  }
+  // Событие - изменение поля "имя"
+  name.onkeyup = validateForm;
 
-  // Событие - изменение поля ОТЗЫВ
-  text.onkeyup = function() {
-    validateForm();
-  }
+  // Событие - изменение поля "отзыв"
+  text.onkeyup = validateForm;
+
+  // Событие - отправка формы
+  form.onsubmit = function(evt) {
+    evt.preventDefault();
+
+    var mark = form.querySelector('[name=review-mark]:checked');
+
+    var myBirthDay = +new Date(2015, 1, 2);
+    var dateToExpire = +Date.now() + (+Date.now() - myBirthDay);
+    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
+
+    document.cookie = 'review-mark=' + mark.value + ';expires=' + formattedDateToExpire;
+    document.cookie = 'review-name=' + name.value + ';expires=' + formattedDateToExpire;
+
+    form.submit();
+  };
 
   // Ф-ция валидации формы
   function validateForm() {
@@ -56,7 +81,7 @@
       text.setAttribute('required', '');
       // Прячем или показываем подсказку
       // в зависимости от заполненности поля
-      if (text.value == '') {
+      if (text.value === '') {
         textHint.classList.remove('invisible');
         hintParent.classList.remove('invisible');
         submit.setAttribute('disabled', '');
@@ -81,7 +106,7 @@
     }
 
     // Проверка поля с ИМЕНЕМ
-    if (name.value == '') {
+    if (name.value === '') {
       nameHint.classList.remove('invisible');
       hintParent.classList.remove('invisible');
       submit.setAttribute('disabled', '');
