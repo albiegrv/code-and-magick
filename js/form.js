@@ -28,7 +28,7 @@
     // Находим радио-баттон с совпадающим значением
     // И добавляем ему атрибут checked
     var markFromCookie = docCookies.getItem('review-mark');
-    var marks = markParent.querySelectorAll('[name=review-mark');
+    var marks = markParent.querySelectorAll('[name=review-mark]');
 
     for (var i = 0; i < marks.length; i++) {
       if (marks[i].value === markFromCookie) {
@@ -62,10 +62,9 @@
 
     var myBirthDay = +new Date(2015, 1, 2);
     var dateToExpire = +Date.now() + (+Date.now() - myBirthDay);
-    var formattedDateToExpire = new Date(dateToExpire).toUTCString();
 
-    document.cookie = 'review-mark=' + mark.value + ';expires=' + formattedDateToExpire;
-    document.cookie = 'review-name=' + name.value + ';expires=' + formattedDateToExpire;
+    document.cookie = docCookies.setItem('review-mark', mark.value, dateToExpire);
+    document.cookie = docCookies.setItem('review-name', name.value, dateToExpire);
 
     form.submit();
   };
