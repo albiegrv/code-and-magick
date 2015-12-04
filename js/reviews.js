@@ -3,7 +3,7 @@ var reviewFilter = document.querySelector('.reviews-filter');
 
 reviewFilter.classList.add('invisible');
 
-reviews.forEach(function(review){
+reviews.forEach(function(review) {
   var element = getElementByTemplate(review);
   container.appendChild(element);
 });
@@ -32,11 +32,11 @@ function getElementByTemplate(data) {
     userImg.width = 124;
     userImg.height = 124;
     userImg.classList.add('review-author');
-  }
+  };
 
   userImg.onerror = function() {
     element.classList.add('review-load-failure');
-  }
+  };
 
   userImg.src = data.author.picture;
   userImg.alt = data.author.name;
