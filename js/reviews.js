@@ -1,3 +1,7 @@
+/* global reviews: true */
+
+'use strict';
+
 var container = document.querySelector('.reviews-list');
 var reviewFilter = document.querySelector('.reviews-filter');
 
