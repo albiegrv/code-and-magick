@@ -17,9 +17,21 @@ reviewFilter.classList.remove('invisible');
 function getElementByTemplate(data) {
   var template = document.querySelector('#review-template');
   var element = template.content.children[0].cloneNode(true);
+  var stars = element.querySelector('.review-rating');
 
   element.querySelector('.review-text').textContent = data.description;
-  //element.querySelector('.review-rating').textContent = data.rating;
+
+  if (data.rating === 2) {
+    stars.classList.add('review-rating-two');
+  } else if (data.rating === 3) {
+    stars.classList.add('review-rating-three');
+  } else if (data.rating === 4) {
+    stars.classList.add('review-rating-four');
+  } else if (data.rating === 5) {
+    stars.classList.add('review-rating-five');
+  } else {
+    stars.classList.add('review-rating-one');
+  }
 
   var userImg = new Image();
   var tempImg = element.querySelector('.review-author');
