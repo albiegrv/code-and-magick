@@ -4,6 +4,7 @@
 
 var container = document.querySelector('.reviews-list');
 var reviewFilter = document.querySelector('.reviews-filter');
+var template = document.querySelector('#review-template');
 
 reviewFilter.classList.add('invisible');
 
@@ -15,23 +16,40 @@ reviews.forEach(function(review) {
 reviewFilter.classList.remove('invisible');
 
 function getElementByTemplate(data) {
-  var template = document.querySelector('#review-template');
-  var element = template.content.children[0].cloneNode(true);
-  var stars = element.querySelector('.review-rating');
+
+  if ('content' in template) {
+    var element = template.content.children[0].cloneNode(true);
+  } else {
+    var element = template.children[0].cloneNode(true);
+  }
 
   element.querySelector('.review-text').textContent = data.description;
 
-  if (data.rating === 2) {
-    stars.classList.add('review-rating-two');
-  } else if (data.rating === 3) {
-    stars.classList.add('review-rating-three');
-  } else if (data.rating === 4) {
-    stars.classList.add('review-rating-four');
-  } else if (data.rating === 5) {
-    stars.classList.add('review-rating-five');
-  } else {
-    stars.classList.add('review-rating-one');
+  var stars = element.querySelector('.review-rating');
+  var ratingSuffix = '';
+
+  switch(data.rating) {
+    case 2:
+      ratingSuffix = 'two';
+      break;
+
+    case 3:
+      ratingSuffix = 'three';
+      break;
+
+    case 4:
+      ratingSuffix = 'four';
+      break;
+
+    case 5:
+      ratingSuffix = 'five';
+      break;
+
+    default:
+      ratingSuffix = 'one';
+      break;
   }
+  stars.classList.add('review-rating-' + ratingSuffix);
 
   var userImg = new Image();
   var tempImg = element.querySelector('.review-author');
