@@ -1,26 +1,135 @@
-/* global reviews: true */
-
 'use strict';
 
 var container = document.querySelector('.reviews-list');
-var reviewFilter = document.querySelector('.reviews-filter');
+var reviewsFilter = document.querySelector('.reviews-filter');
 var template = document.querySelector('#review-template');
+var reviewsBlock = document.querySelector('.reviews');
+var activeFilter = 'reviews-all';
+var reviews = [];
 
-reviewFilter.classList.add('invisible');
+var filters = document.querySelectorAll('.reviews-filter-item');
+for (var i = 0; i < filters.length; i++) {
+  filters[i].onclick = function(evt) {
+    // Т.к. кликаем на лэйбл используем htmlFor
+    var clickedElementID = evt.target.htmlFor;
+    setActiveFilter(clickedElementID);
+  };
+}
 
-reviews.forEach(function(review) {
-  var element = getElementByTemplate(review);
-  container.appendChild(element);
-});
+reviewsFilter.classList.add('invisible');
 
-reviewFilter.classList.remove('invisible');
+getReviews();
 
+reviewsFilter.classList.remove('invisible');
+
+// Ф-ция отрисовки отзывов
+function renderReviews(reviewsToRender) {
+  container.innerHTML = '';
+  var fragment = document.createDocumentFragment();
+
+  reviewsToRender.forEach(function(review) {
+    var element = getElementByTemplate(review);
+    fragment.appendChild(element);
+  });
+
+  container.appendChild(fragment);
+}
+
+// Ф-ция активации фильтров
+function setActiveFilter(id) {
+  if (activeFilter === id) {
+    return;
+  }
+
+  var filteredReviews = reviews.slice(0);
+
+  switch (id) {
+
+    case 'reviews-recent':
+      filteredReviews = filteredReviews.filter(function(a) {
+        var reviewDate = +new Date(a.date);
+        var currentDate = +Date.now();
+        var halfYear = 6 * 30 * 24 * 60 * 60 * 1000;
+        return reviewDate > (currentDate - halfYear);
+      });
+      filteredReviews = filteredReviews.sort(function(a, b) {
+        var dateA = +new Date(a.date);
+        var dateB = +new Date(b.date);
+        return dateA - dateB;
+      });
+      break;
+
+    case 'reviews-good':
+      filteredReviews = filteredReviews.filter(function(a) {
+        return a.rating > 2;
+      });
+      filteredReviews = filteredReviews.sort(function(a, b) {
+        return b.rating - a.rating;
+      });
+      break;
+
+    case 'reviews-bad':
+      filteredReviews = filteredReviews.filter(function(a) {
+        return a.rating < 3;
+      });
+      filteredReviews = filteredReviews.sort(function(a, b) {
+        return a.rating - b.rating;
+      });
+      break;
+
+    case 'reviews-popular':
+      filteredReviews = filteredReviews.sort(function(a, b) {
+        return b.review + '-rating' - a.review + '-rating';
+      });
+      break;
+  }
+
+  renderReviews(filteredReviews);
+  activeFilter = id;
+}
+
+// Ф-ция загрузки отзывов из файла reviews.json
+function getReviews() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'data/reviews.json');
+
+  xhr.onload = function(evt) {
+    var rawData = evt.target.response;
+    var loadedReviews = JSON.parse(rawData);
+    // Сохраняем загруженные отзывы
+    // для фильтрации
+    reviews = loadedReviews;
+    // Удаляем класс для прелоадера
+    reviewsBlock.classList.remove('reviews-list-loading');
+
+    // Обработка загруженных данных
+    renderReviews(loadedReviews);
+  };
+
+  xhr.onreadystatechange = function() {
+    // Пока загрузка не закончилась
+    // Добавляем класс для прелоадера
+    if (this.readyState !== 4) {
+      reviewsBlock.classList.add('reviews-list-loading');
+    }
+
+    // Если произошла ошибка
+    if (this.status !== 200) {
+      reviewsBlock.classList.add('reviews-load-failure');
+    }
+  };
+
+  xhr.send();
+}
+
+// Ф-ция загрузки шаблона
 function getElementByTemplate(data) {
+  var element;
 
   if ('content' in template) {
-    var element = template.content.children[0].cloneNode(true);
+    element = template.content.children[0].cloneNode(true);
   } else {
-    var element = template.children[0].cloneNode(true);
+    element = template.children[0].cloneNode(true);
   }
 
   element.querySelector('.review-text').textContent = data.description;
@@ -28,7 +137,7 @@ function getElementByTemplate(data) {
   var stars = element.querySelector('.review-rating');
   var ratingSuffix = '';
 
-  switch(data.rating) {
+  switch (data.rating) {
     case 2:
       ratingSuffix = 'two';
       break;
