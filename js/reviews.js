@@ -1,3 +1,5 @@
+(function(){
+
 'use strict';
 
 var container = document.querySelector('.reviews-list');
@@ -7,20 +9,15 @@ var reviewsBlock = document.querySelector('.reviews');
 var activeFilter = 'reviews-all';
 var reviews = [];
 
-var filters = document.querySelectorAll('.reviews-filter-item');
+var filters = document.querySelectorAll('[name=reviews]');
 for (var i = 0; i < filters.length; i++) {
-  filters[i].onclick = function(evt) {
-    // Т.к. кликаем на лэйбл используем htmlFor
-    var clickedElementID = evt.target.htmlFor;
+  filters[i].onchange = function(evt) {
+    var clickedElementID = evt.target.id;
     setActiveFilter(clickedElementID);
-  };
+  }
 }
 
-reviewsFilter.classList.add('invisible');
-
 getReviews();
-
-reviewsFilter.classList.remove('invisible');
 
 // Ф-ция отрисовки отзывов
 function renderReviews(reviewsToRender) {
@@ -33,6 +30,8 @@ function renderReviews(reviewsToRender) {
   });
 
   container.appendChild(fragment);
+
+  reviewsFilter.classList.remove('invisible');
 }
 
 // Ф-ция активации фильтров
@@ -55,7 +54,7 @@ function setActiveFilter(id) {
       filteredReviews = filteredReviews.sort(function(a, b) {
         var dateA = +new Date(a.date);
         var dateB = +new Date(b.date);
-        return dateA - dateB;
+        return dateB - dateA;
       });
       break;
 
@@ -79,7 +78,7 @@ function setActiveFilter(id) {
 
     case 'reviews-popular':
       filteredReviews = filteredReviews.sort(function(a, b) {
-        return b.review + '-rating' - a.review + '-rating';
+        return b['review-rating'] - a['review-rating'];
       });
       break;
   }
@@ -90,12 +89,19 @@ function setActiveFilter(id) {
 
 // Ф-ция загрузки отзывов из файла reviews.json
 function getReviews() {
+  reviewsFilter.classList.add('invisible');
+
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'data/reviews.json');
 
   xhr.onload = function(evt) {
     var rawData = evt.target.response;
-    var loadedReviews = JSON.parse(rawData);
+    try {
+      var loadedReviews = JSON.parse(rawData);
+    } catch (e) {
+      console.error("Error while loading data", ex.message);
+    }
+
     // Сохраняем загруженные отзывы
     // для фильтрации
     reviews = loadedReviews;
@@ -187,3 +193,4 @@ function getElementByTemplate(data) {
 
   return element;
 }
+})();
