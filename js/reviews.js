@@ -18,31 +18,16 @@
   filters.addEventListener('change', function(evt) {
     var clickedElementID = evt.target.id;
     setActiveFilter(clickedElementID);
-    // При активации фильтров кнопка "еще отзывы"
-    // изчезает и начинается подгрузка по скроллу
-    moreButton.classList.add('invisible');
   });
-
-  var scrollTimeout;
 
   // Автоподгрузка отзывов по скроллу
+  var scrollTimeout;
   window.addEventListener('scroll', function() {
     clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(function() {
-      // Определяем положение футера
-      var footerCoordinates = document.querySelector('footer').getBoundingClientRect();
-      // Определяем высоту экрана
-      var viewportSize = window.innerHeight;
-      // если смещение футера с вычетом высоты экрана меньше высоты футера
-      // то
-      if (footerCoordinates.bottom - viewportSize <= footerCoordinates.height) {
-        if (currentPage < Math.ceil(filteredReviews.length / PAGE_SIZE)) {
-          renderReviews(filteredReviews, ++currentPage);
-        }
-      }
-    }, 100);
+    scrollTimeout = setTimeout(addMoreReviewsByScroll, 100);
   });
 
+  // Загружаем отзывы и отрисовываем
   getReviews();
 
   // Ф-ция отрисовки отзывов
@@ -56,6 +41,11 @@
     var from = pageNumber * PAGE_SIZE;
     var to = from + PAGE_SIZE;
     var pageReviews = reviewsToRender.slice(from, to);
+
+    // Если будут отрисованы последние элементы, кнопка исчезает
+    if (to >= reviewsToRender.length) {
+      moreButton.classList.add('invisible');
+    }
 
     pageReviews.forEach(function(review) {
       var element = getElementByTemplate(review);
@@ -73,6 +63,7 @@
     }
 
     filteredReviews = reviews.slice(0);
+    moreButton.classList.remove('invisible');
 
     switch (id) {
 
@@ -137,10 +128,11 @@
       // Сохраняем загруженные отзывы
       // для фильтрации
       reviews = loadedReviews;
+      filteredReviews = reviews.slice(0);
       // Удаляем класс для прелоадера
       reviewsBlock.classList.remove('reviews-list-loading');
       // Обработка загруженных данных
-      renderReviews(loadedReviews, currentPage, true);
+      renderReviews(filteredReviews, currentPage, true);
       // Показываем кнопку "еще отзывы"
       moreButton.classList.remove('invisible');
       moreButton.addEventListener('click', addMoreReviews);
@@ -162,12 +154,23 @@
     xhr.send();
   }
 
+  // Ф-ция постраничной дозагрузки отзывов
   function addMoreReviews() {
-    if (currentPage < Math.ceil(reviews.length / PAGE_SIZE)) {
-      renderReviews(reviews, ++currentPage);
-    } else {
-      moreButton.removeEventListener('click', addMoreReviews);
-      moreButton.classList.add('invisible');
+    if (currentPage < Math.round(filteredReviews.length / PAGE_SIZE)) {
+      renderReviews(filteredReviews, ++currentPage);
+    }
+  }
+
+  // Ф-ция дозагрузки отзывов по скроллу
+  function addMoreReviewsByScroll() {
+    // Определяем положение футера
+    var footerCoordinates = document.querySelector('footer').getBoundingClientRect();
+    // Определяем высоту экрана
+    var viewportSize = window.innerHeight;
+    // если смещение футера с вычетом высоты экрана меньше высоты футера
+    // то отрисовываем ещё отзывы
+    if (footerCoordinates.bottom - viewportSize <= footerCoordinates.height) {
+      addMoreReviews();
     }
   }
 
