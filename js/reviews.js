@@ -6,31 +6,53 @@
   var reviewsFilter = document.querySelector('.reviews-filter');
   var template = document.querySelector('#review-template');
   var reviewsBlock = document.querySelector('.reviews');
+  var moreButton = document.querySelector('.reviews-controls-more');
   var activeFilter = 'reviews-all';
   var reviews = [];
+  var filteredReviews = [];
+  var currentPage = 0;
+  var PAGE_SIZE = 3;
 
-  var filters = document.querySelectorAll('[name=reviews]');
-  for (var i = 0; i < filters.length; i++) {
-    filters[i].onchange = function(evt) {
-      var clickedElementID = evt.target.id;
-      setActiveFilter(clickedElementID);
-    };
-  }
+  // Отлов события активации фильтров
+  var filters = document.querySelector('.reviews-filter');
+  filters.addEventListener('change', function(evt) {
+    var clickedElementID = evt.target.id;
+    setActiveFilter(clickedElementID);
+  });
 
+  // Автоподгрузка отзывов по скроллу
+  var scrollTimeout;
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(addMoreReviewsByScroll, 100);
+  });
+
+  // Загружаем отзывы и отрисовываем
   getReviews();
 
   // Ф-ция отрисовки отзывов
-  function renderReviews(reviewsToRender) {
-    container.innerHTML = '';
+  function renderReviews(reviewsToRender, pageNumber, replace) {
+    if (replace) {
+      container.innerHTML = '';
+    }
+
     var fragment = document.createDocumentFragment();
 
-    reviewsToRender.forEach(function(review) {
+    var from = pageNumber * PAGE_SIZE;
+    var to = from + PAGE_SIZE;
+    var pageReviews = reviewsToRender.slice(from, to);
+
+    // Если будут отрисованы последние элементы, кнопка исчезает
+    if (to >= reviewsToRender.length) {
+      moreButton.classList.add('invisible');
+    }
+
+    pageReviews.forEach(function(review) {
       var element = getElementByTemplate(review);
       fragment.appendChild(element);
     });
 
     container.appendChild(fragment);
-
     reviewsFilter.classList.remove('invisible');
   }
 
@@ -40,7 +62,8 @@
       return;
     }
 
-    var filteredReviews = reviews.slice(0);
+    filteredReviews = reviews.slice(0);
+    moreButton.classList.remove('invisible');
 
     switch (id) {
 
@@ -83,7 +106,8 @@
         break;
     }
 
-    renderReviews(filteredReviews);
+    currentPage = 0;
+    renderReviews(filteredReviews, currentPage, true);
     activeFilter = id;
   }
 
@@ -101,15 +125,17 @@
       } catch (e) {
         console.error('Error while loading data', e.message);
       }
-
       // Сохраняем загруженные отзывы
       // для фильтрации
       reviews = loadedReviews;
+      filteredReviews = reviews.slice(0);
       // Удаляем класс для прелоадера
       reviewsBlock.classList.remove('reviews-list-loading');
-
       // Обработка загруженных данных
-      renderReviews(loadedReviews);
+      renderReviews(filteredReviews, currentPage, true);
+      // Показываем кнопку "еще отзывы"
+      moreButton.classList.remove('invisible');
+      moreButton.addEventListener('click', addMoreReviews);
     };
 
     xhr.onreadystatechange = function() {
@@ -126,6 +152,26 @@
     };
 
     xhr.send();
+  }
+
+  // Ф-ция постраничной дозагрузки отзывов
+  function addMoreReviews() {
+    if (currentPage < Math.round(filteredReviews.length / PAGE_SIZE)) {
+      renderReviews(filteredReviews, ++currentPage);
+    }
+  }
+
+  // Ф-ция дозагрузки отзывов по скроллу
+  function addMoreReviewsByScroll() {
+    // Определяем положение футера
+    var footerCoordinates = document.querySelector('footer').getBoundingClientRect();
+    // Определяем высоту экрана
+    var viewportSize = window.innerHeight;
+    // если смещение футера с вычетом высоты экрана меньше высоты футера
+    // то отрисовываем ещё отзывы
+    if (footerCoordinates.bottom - viewportSize <= footerCoordinates.height) {
+      addMoreReviews();
+    }
   }
 
   // Ф-ция загрузки шаблона
