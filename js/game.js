@@ -748,4 +748,27 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
+
+  var clouds = document.querySelector('.header-clouds');
+  var demo = document.querySelector('.demo');
+  var scrollTimeout;
+
+  // Движение облаков и постановка игры на паузу
+  window.addEventListener('scroll', function() {
+    clearTimeout(scrollTimeout);
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    scrollTimeout = setTimeout(function() {
+
+      // Движение облаков
+      if (clouds.getBoundingClientRect().bottom > 0) {
+        clouds.style.backgroundPositionX = '-' + scrollTop + 'px';
+      }
+
+      // Пауза, если блок с игрой не видно
+      if (demo.getBoundingClientRect().bottom < 0) {
+        game.setGameStatus(window.Game.Verdict.PAUSE);
+      }
+    }, 100);
+  });
 })();
