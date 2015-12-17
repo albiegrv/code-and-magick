@@ -20,13 +20,6 @@
     setActiveFilter(clickedElementID);
   });
 
-  // Автоподгрузка отзывов по скроллу
-  var scrollTimeout;
-  window.addEventListener('scroll', function() {
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(addMoreReviewsByScroll, 100);
-  });
-
   // Загружаем отзывы и отрисовываем
   getReviews();
 
@@ -158,19 +151,6 @@
   function addMoreReviews() {
     if (currentPage < Math.round(filteredReviews.length / PAGE_SIZE)) {
       renderReviews(filteredReviews, ++currentPage);
-    }
-  }
-
-  // Ф-ция дозагрузки отзывов по скроллу
-  function addMoreReviewsByScroll() {
-    // Определяем положение футера
-    var footerCoordinates = document.querySelector('footer').getBoundingClientRect();
-    // Определяем высоту экрана
-    var viewportSize = window.innerHeight;
-    // если смещение футера с вычетом высоты экрана меньше высоты футера
-    // то отрисовываем ещё отзывы
-    if (footerCoordinates.bottom - viewportSize <= footerCoordinates.height) {
-      addMoreReviews();
     }
   }
 
