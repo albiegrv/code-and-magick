@@ -758,11 +758,14 @@
     clearTimeout(scrollTimeout);
     var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-    scrollTimeout = setTimeout(function() {
+    // Движение облаков
+    clouds.style.backgroundPosition = '-' + scrollTop + 'px 0';
 
-      // Движение облаков
+    scrollTimeout = setTimeout(function() {
+      console.log(clouds.getBoundingClientRect().bottom);
       if (clouds.getBoundingClientRect().bottom > 0) {
-        clouds.style.backgroundPositionX = '-' + scrollTop + 'px';
+        // Отмена движения по таймаута
+        clouds.style.backgroundPosition = '0 0';
       }
 
       // Пауза, если блок с игрой не видно
