@@ -762,7 +762,6 @@
     clouds.style.backgroundPosition = '-' + scrollTop + 'px 0';
 
     scrollTimeout = setTimeout(function() {
-      console.log(clouds.getBoundingClientRect().bottom);
       if (clouds.getBoundingClientRect().bottom > 0) {
         // Отмена движения по таймаута
         clouds.style.backgroundPosition = '0 0';
