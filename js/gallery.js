@@ -15,7 +15,7 @@
     this._onDocumentKeyDown = this._onDocumentKeyDown.bind(this);
     //this._onLeftControlClick = this._onLeftControlClick.bind(this);
     //this._onRightControlClick = this._onRightControlClick.bind(this);
-  }
+  };
 
   /**
   * Открыть галерею
@@ -59,8 +59,8 @@
   * @param {Event} evt
   * @private
   */
-  Gallery.prototype._onDocumentKeyDown = function (evt) {
-    if (evt.keyCode == 27) {
+  Gallery.prototype._onDocumentKeyDown = function(evt) {
+    if (evt.keyCode === 27) {
       this.hide();
     }
   };
@@ -69,7 +69,7 @@
   * Обработчик клика по левому контролу
   * @private
   */
-  Gallery.prototype._onLeftControlClick = function () {
+  Gallery.prototype._onLeftControlClick = function() {
     console.log('Left control is clicked');
   };
 
@@ -77,7 +77,7 @@
   * Обработчик клика по правому контролу
   * @private
   */
-  Gallery.prototype._onRightControlClick = function () {
+  Gallery.prototype._onRightControlClick = function() {
     console.log('Right control is clicked');
   };
 
