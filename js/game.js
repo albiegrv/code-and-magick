@@ -1,3 +1,5 @@
+/* global Gallery: true */
+
 'use strict';
 
 (function() {
@@ -258,46 +260,6 @@
     this._pauseListener = this._pauseListener.bind(this);
   };
 
-  /**
-  * Ф-ция для отрисовки фона сообщения
-  */
-  var drawFigure = function(context, baseX, baseY, baseWidth, color) {
-    context.beginPath();
-    context.fillStyle = color;
-    context.moveTo(baseX, baseY);
-    context.lineTo(baseX - 20, baseY + 150);
-    context.lineTo(baseX - 20 + baseWidth, baseY + 140);
-    context.lineTo(baseX + baseWidth, baseY);
-    context.closePath();
-    context.fill();
-  };
-
-  /**
-  * Ф-ция для отрисовки сообщения
-  */
-  var drawMessage = function(context, message, baseX, baseY, baseWidth) {
-    var lineHeight = 26;
-    var words = message.split(' ');
-    var line = '';
-    baseWidth = baseWidth - 25;
-
-    context.font = '16px PT Mono';
-    context.fillStyle = '#000000';
-
-    for (var n = 0; n < words.length; n++) {
-      var testLine = line + words[n] + ' ';
-      var testWidth = context.measureText(testLine).width;
-      if (testWidth > baseWidth) {
-        context.fillText(line, baseX, baseY);
-        line = words[n] + ' ';
-        baseY += lineHeight;
-      } else {
-        line = testLine;
-      }
-    }
-    context.fillText(line, baseX, baseY);
-  };
-
   Game.prototype = {
     /**
      * Текущий уровень игры.
@@ -415,45 +377,91 @@
     },
 
     /**
+    * Ф-ция отрисовки фона сообщения.
+    * @param {CanvasRenderingContext2D} context
+    * @param {number} baseX Начальная координата X
+    * @param {number} baseY Начальная координата Y
+    * @param {number} baseWidth Базовая ширина
+    * @param {string} color Цвет линии
+    * @private
+    */
+    _drawFigure: function(context, baseX, baseY, baseWidth, color) {
+      context.beginPath();
+      context.fillStyle = color;
+      context.moveTo(baseX, baseY);
+      context.lineTo(baseX - 20, baseY + 150);
+      context.lineTo(baseX - 20 + baseWidth, baseY + 140);
+      context.lineTo(baseX + baseWidth, baseY);
+      context.closePath();
+      context.fill();
+    },
+
+    /**
+    * Ф-ция отрисовки сообщения.
+    * @param {CanvasRenderingContext2D} context
+    * @param {string} message Текст сообщения
+    * @param {number} baseX Начальная координата X
+    * @param {number} baseY Начальная координата Y
+    * @param {number} baseWidth Базовая ширина
+    * @private
+    */
+    _drawMessage: function(context, message, baseX, baseY, baseWidth) {
+      var lineHeight = 26;
+      var words = message.split(' ');
+      var line = '';
+      baseWidth = baseWidth - 25;
+
+      context.font = '16px PT Mono';
+      context.fillStyle = '#000000';
+
+      for (var n = 0; n < words.length; n++) {
+        var testLine = line + words[n] + ' ';
+        var testWidth = context.measureText(testLine).width;
+        if (testWidth > baseWidth) {
+          context.fillText(line, baseX, baseY);
+          line = words[n] + ' ';
+          baseY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      context.fillText(line, baseX, baseY);
+    },
+
+    /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
+      var startX = 350;
+      var startY = 30;
+      var shift = 10;
+      var width = 300;
+      var message;
+
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          var message = 'Старый, да ты выйграл! Ты красавчик! SPACE для рестарта.';
-          var startX = 350;
-          var startY = 30;
-          var width = 300;
-          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
-          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
+          message = 'Старый, да ты выйграл! Ты красавчик! SPACE для рестарта.';
+          this._drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          this._drawFigure(this.ctx, startX - shift, startY - shift, width, '#ffffff');
+          this._drawMessage(this.ctx, message, startX + shift, startY + shift * 2, width);
           break;
         case Verdict.FAIL:
           message = 'Старый, да ты проиграл! Не очень! SPACE для рестарта.';
-          startX = 350;
-          startY = 30;
-          width = 300;
-          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
-          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
+          this._drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          this._drawFigure(this.ctx, startX - shift, startY - shift, width, '#ffffff');
+          this._drawMessage(this.ctx, message, startX + shift, startY + shift * 2, width);
           break;
         case Verdict.PAUSE:
           message = 'Пауза. Нажми SPACE для продолжения.';
-          startX = 350;
-          startY = 30;
-          width = 300;
-          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
-          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
+          this._drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          this._drawFigure(this.ctx, startX - shift, startY - shift, width, '#ffffff');
+          this._drawMessage(this.ctx, message, startX + shift, startY + shift * 2, width);
           break;
         case Verdict.INTRO:
           message = 'Старичок приветствует тебя! Для старта игры нажми SPACE. Управление: ARROWS, метнуть огненный шар: SHIFT.';
-          startX = 340;
-          startY = 40;
-          width = 300;
-          drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
-          drawFigure(this.ctx, startX - 10, startY - 10, width, '#ffffff');
-          drawMessage(this.ctx, message, startX + 10, startY + 20, width);
+          this._drawFigure(this.ctx, startX, startY, width, 'rgba(0, 0, 0, 0.7)');
+          this._drawFigure(this.ctx, startX - shift, startY - shift, width, '#ffffff');
+          this._drawMessage(this.ctx, message, startX + shift, startY + shift * 2, width);
           break;
       }
     },
@@ -766,11 +774,24 @@
         // Отмена движения по таймаута
         clouds.style.backgroundPosition = '0 0';
       }
-
       // Пауза, если блок с игрой не видно
       if (demo.getBoundingClientRect().bottom < 0) {
         game.setGameStatus(window.Game.Verdict.PAUSE);
       }
     }, 100);
   });
+
+  // Создаём объект галлереи
+  var gallery = new Gallery();
+  // Находим все картинки
+  var images = document.querySelectorAll('.photogallery-image');
+  // Ловим клики на картинки
+  Array.prototype.forEach.call(images, function(image) {
+    image.addEventListener('click', function(evt) {
+      evt.preventDefault();
+      gallery.show();
+    });
+  });
+
+
 })();
