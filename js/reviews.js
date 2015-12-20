@@ -1,10 +1,12 @@
+/* global Review: true */
+
 'use strict';
 
 (function() {
 
   var container = document.querySelector('.reviews-list');
   var reviewsFilter = document.querySelector('.reviews-filter');
-  var template = document.querySelector('#review-template');
+
   var reviewsBlock = document.querySelector('.reviews');
   var moreButton = document.querySelector('.reviews-controls-more');
   var activeFilter = 'reviews-all';
@@ -26,7 +28,10 @@
   // Ф-ция отрисовки отзывов
   function renderReviews(reviewsToRender, pageNumber, replace) {
     if (replace) {
-      container.innerHTML = '';
+      var renderedElements = container.querySelectorAll('.review');
+      Array.prototype.forEach.call(renderedElements, function(el) {
+        container.removeChild(el);
+      });
     }
 
     var fragment = document.createDocumentFragment();
@@ -41,8 +46,9 @@
     }
 
     pageReviews.forEach(function(review) {
-      var element = getElementByTemplate(review);
-      fragment.appendChild(element);
+      var reviewElement = new Review(review);
+      reviewElement.render();
+      fragment.appendChild(reviewElement.element);
     });
 
     container.appendChild(fragment);
@@ -125,7 +131,7 @@
       // Удаляем класс для прелоадера
       reviewsBlock.classList.remove('reviews-list-loading');
       // Обработка загруженных данных
-      renderReviews(filteredReviews, currentPage, true);
+      renderReviews(filteredReviews, currentPage);
       // Показываем кнопку "еще отзывы"
       moreButton.classList.remove('invisible');
       moreButton.addEventListener('click', addMoreReviews);
@@ -152,71 +158,5 @@
     if (currentPage < Math.round(filteredReviews.length / PAGE_SIZE)) {
       renderReviews(filteredReviews, ++currentPage);
     }
-  }
-
-  // Ф-ция загрузки шаблона
-  function getElementByTemplate(data) {
-    var element;
-
-    if ('content' in template) {
-      element = template.content.children[0].cloneNode(true);
-    } else {
-      element = template.children[0].cloneNode(true);
-    }
-
-    element.querySelector('.review-text').textContent = data.description;
-
-    var stars = element.querySelector('.review-rating');
-    var ratingSuffix = '';
-
-    switch (data.rating) {
-      case 2:
-        ratingSuffix = 'two';
-        break;
-
-      case 3:
-        ratingSuffix = 'three';
-        break;
-
-      case 4:
-        ratingSuffix = 'four';
-        break;
-
-      case 5:
-        ratingSuffix = 'five';
-        break;
-
-      default:
-        ratingSuffix = 'one';
-        break;
-    }
-    stars.classList.add('review-rating-' + ratingSuffix);
-
-    var userImg = new Image();
-    var tempImg = element.querySelector('.review-author');
-    var IMAGE_TIMEOUT = 10000;
-
-    var imageLoadTimeout = setTimeout(function() {
-      userImg.src = '';
-      element.classList.add('review-load-failure');
-    }, IMAGE_TIMEOUT);
-
-    userImg.onload = function() {
-      clearTimeout(imageLoadTimeout);
-      element.replaceChild(userImg, tempImg);
-      userImg.width = 124;
-      userImg.height = 124;
-      userImg.classList.add('review-author');
-    };
-
-    userImg.onerror = function() {
-      element.classList.add('review-load-failure');
-    };
-
-    userImg.src = data.author.picture;
-    userImg.alt = data.author.name;
-    userImg.title = data.author.name;
-
-    return element;
   }
 })();
