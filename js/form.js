@@ -20,22 +20,17 @@
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
     formContainer.classList.remove('invisible');
-
     // Вставляем в поле "имя" значение из cookie
     name.value = docCookies.getItem('review-name');
-
     // Достаём значение "оценки" из cookie
-    // Находим радио-баттон с совпадающим значением
-    // И добавляем ему атрибут checked
     var markFromCookie = docCookies.getItem('review-mark');
-    var marks = markParent.querySelectorAll('[name=review-mark]');
-
-    for (var i = 0; i < marks.length; i++) {
-      if (marks[i].value === markFromCookie) {
-        marks[i].setAttribute('checked', '');
-      }
+    // Проверяем, что оно не пустое
+    if (markFromCookie !== null) {
+      // Находим радио-баттон с совпадающим значением
+      var markToBeChecked = markParent.querySelector('[name="review-mark"][value="' + markFromCookie + '"]');
+      // И добавляем ему атрибут checked
+      markToBeChecked.setAttribute('checked', '');
     }
-
     validateForm();
   };
 
@@ -69,58 +64,41 @@
     form.submit();
   };
 
-  // Ф-ция валидации формы
+  /**
+   * Ф-ция валидации формы.
+   */
   function validateForm() {
-    // Проверка полей с ОЦЕНКОЙ и ОТЗЫВОМ
-    // Находим выбранную оценку
     var mark = form.querySelector('[name=review-mark]:checked');
-    // Если оценка ниже 3, поле с отзывом становится
-    // обязательным
-    if (Number(mark.value) < 3) {
+
+    var isTextRequired = Number(mark.value) < 3;
+    var isTextEmpty = text.value === '';
+    var isNameEmpty = name.value === '';
+    var isTextRequiredAndEmpty = isTextRequired && isTextEmpty;
+
+    if (isTextRequired) {
       text.setAttribute('required', '');
-      // Прячем или показываем подсказку
-      // в зависимости от заполненности поля
-      if (text.value === '') {
-        textHint.classList.remove('invisible');
-        hintParent.classList.remove('invisible');
-        submit.setAttribute('disabled', '');
-      } else {
-        textHint.classList.add('invisible');
-        // Если поле "имя" валидно, то
-        // прячем весь блок с подсказками и активируем кнопку
-        if (nameHint.classList.contains('invisible')) {
-          hintParent.classList.add('invisible');
-          submit.removeAttribute('disabled');
-        } else {
-          // Если не валидно, возвращаем подсказки
-          // и дизейблим кнопку
-          hintParent.classList.remove('invisible');
-          submit.setAttribute('disabled', '');
-        }
-      }
-    // Если оценка 3 или выше, то отзыв необязателен
     } else {
-      text.removeAttribute('required');
-      textHint.classList.add('invisible');
+      text.removeAttribute('required', '');
     }
 
-    // Проверка поля с ИМЕНЕМ
-    if (name.value === '') {
-      nameHint.classList.remove('invisible');
+    if (isNameEmpty || isTextRequiredAndEmpty) {
       hintParent.classList.remove('invisible');
       submit.setAttribute('disabled', '');
     } else {
+      hintParent.classList.add('invisible');
+      submit.removeAttribute('disabled');
+    }
+
+    if (isTextRequiredAndEmpty) {
+      textHint.classList.remove('invisible');
+    } else {
+      textHint.classList.add('invisible');
+    }
+
+    if (isNameEmpty) {
+      nameHint.classList.remove('invisible');
+    } else {
       nameHint.classList.add('invisible');
-      // Если поле "отзыв" валидно, то
-      // прячем весь блок с подсказками
-      if (textHint.classList.contains('invisible')) {
-        hintParent.classList.add('invisible');
-        submit.removeAttribute('disabled');
-      } else {
-        hintParent.classList.remove('invisible');
-        submit.setAttribute('disabled', '');
-      }
     }
   }
-
 })();
