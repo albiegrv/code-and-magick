@@ -10,6 +10,9 @@
     this._data = data;
   }
 
+  /**
+  * Создание элемента отзыва.
+  */
   Review.prototype.render = function() {
     var template = document.querySelector('#review-template');
 

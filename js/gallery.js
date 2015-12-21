@@ -18,7 +18,7 @@
   };
 
   /**
-  * Открыть галерею
+  * Открыть галерею.
   */
   Gallery.prototype.show = function() {
     // Показываем галерею
@@ -34,7 +34,7 @@
   };
 
   /**
-  * Закрыть галерею
+  * Закрыть галерею.
   */
   Gallery.prototype.hide = function() {
     // Прячем галерею
@@ -47,7 +47,7 @@
   };
 
   /**
-  * Обработчик клика по крестику
+  * Обработчик клика по крестику.
   * @private
   */
   Gallery.prototype._onCloseClick = function() {
@@ -55,18 +55,19 @@
   };
 
   /**
-  * Обработчик нажатия клавиши ESC
+  * Обработчик нажатия клавиши ESC.
   * @param {Event} evt
   * @private
   */
   Gallery.prototype._onDocumentKeyDown = function(evt) {
-    if (evt.keyCode === 27) {
+    var ESC_CODE = 27;
+    if (evt.keyCode === ESC_CODE) {
       this.hide();
     }
   };
 
   /**
-  * Обработчик клика по левому контролу
+  * Обработчик клика по левому контролу.
   * @private
   */
   Gallery.prototype._onLeftControlClick = function() {
@@ -74,7 +75,7 @@
   };
 
   /**
-  * Обработчик клика по правому контролу
+  * Обработчик клика по правому контролу.
   * @private
   */
   Gallery.prototype._onRightControlClick = function() {
@@ -82,16 +83,4 @@
   };
 
   window.Gallery = Gallery;
-
-  // Создаём объект галлереи
-  var gallery = new Gallery();
-  var images = document.querySelectorAll('.photogallery-image');
-
-  // Ловим клики на картинки
-  Array.prototype.forEach.call(images, function(image) {
-    image.addEventListener('click', function(evt) {
-      evt.preventDefault();
-      gallery.show();
-    });
-  });
 })();

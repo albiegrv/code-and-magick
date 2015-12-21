@@ -3,16 +3,24 @@
 'use strict';
 
 (function() {
-
   var container = document.querySelector('.reviews-list');
   var reviewsFilter = document.querySelector('.reviews-filter');
-
   var reviewsBlock = document.querySelector('.reviews');
   var moreButton = document.querySelector('.reviews-controls-more');
+
+  /** @type {string} Активный фильтр. Изначально показываются все отзывы. */
   var activeFilter = 'reviews-all';
+
+  /** @type {Array.<Object>} Массив всех загруженных отелей. Изначально пуст. */
   var reviews = [];
+
+  /** @type {Array.<Object>} Отфильтрованный массив отелей. Изначально пуст. */
   var filteredReviews = [];
+
+  /** @type {number} Номер текущей страницы с отзывами. Изначально первая(0) страница */
   var currentPage = 0;
+
+  /** @const {number} Размер одной страницы с отзывами */
   var PAGE_SIZE = 3;
 
   // Отлов события активации фильтров
@@ -25,7 +33,12 @@
   // Загружаем отзывы и отрисовываем
   getReviews();
 
-  // Ф-ция отрисовки отзывов
+  /**
+  * Отрисовка списка отзывов.
+  * @param {Array.<Object>} reviewsToRender
+  * @param {number} pageNumber
+  * @param {boolean=} replace
+  */
   function renderReviews(reviewsToRender, pageNumber, replace) {
     if (replace) {
       var renderedElements = container.querySelectorAll('.review');
@@ -55,7 +68,10 @@
     reviewsFilter.classList.remove('invisible');
   }
 
-  // Ф-ция активации фильтров
+  /**
+  * Активация фильтра.
+  * @param {number} id
+  */
   function setActiveFilter(id) {
     if (activeFilter === id) {
       return;
@@ -110,7 +126,9 @@
     activeFilter = id;
   }
 
-  // Ф-ция загрузки отзывов из файла reviews.json
+  /**
+  * Загрузка отзывов из файла reviews.json.
+  */
   function getReviews() {
     reviewsFilter.classList.add('invisible');
 
@@ -132,7 +150,7 @@
       reviewsBlock.classList.remove('reviews-list-loading');
       // Обработка загруженных данных
       renderReviews(filteredReviews, currentPage);
-      // Показываем кнопку "еще отзывы"
+      // Показываем кнопку "еще отзывы" и ставим на неё обработчик
       moreButton.classList.remove('invisible');
       moreButton.addEventListener('click', addMoreReviews);
     };
@@ -153,7 +171,9 @@
     xhr.send();
   }
 
-  // Ф-ция постраничной дозагрузки отзывов
+  /**
+  * Дорисовка отзывов постранично.
+  */
   function addMoreReviews() {
     if (currentPage < Math.round(filteredReviews.length / PAGE_SIZE)) {
       renderReviews(filteredReviews, ++currentPage);
