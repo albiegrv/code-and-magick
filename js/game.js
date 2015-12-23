@@ -1,5 +1,3 @@
-/* global Gallery: true */
-
 'use strict';
 
 (function() {
@@ -780,18 +778,4 @@
       }
     }, 100);
   });
-
-  // Создаём объект галлереи
-  var gallery = new Gallery();
-  // Находим все картинки
-  var images = document.querySelectorAll('.photogallery-image');
-  // Ловим клики на картинки
-  Array.prototype.forEach.call(images, function(image) {
-    image.addEventListener('click', function(evt) {
-      evt.preventDefault();
-      gallery.show();
-    });
-  });
-
-
 })();
