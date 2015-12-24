@@ -8,9 +8,6 @@
   var reviewsBlock = document.querySelector('.reviews');
   var moreButton = document.querySelector('.reviews-controls-more');
 
-  /** @type {string} Активный фильтр. Изначально показываются все отзывы. */
-  var activeFilter = 'reviews-all';
-
   /** @type {Array.<Object>} Массив всех загруженных отелей. Изначально пуст. */
   var reviews = [];
 
@@ -22,6 +19,15 @@
 
   /** @const {number} Размер одной страницы с отзывами */
   var PAGE_SIZE = 3;
+
+  /** @type {string} Активный фильтр. Изначально показываются все отзывы. */
+  var activeFilter = localStorage.getItem('active-filter') || 'reviews-all';
+
+  if (activeFilter !== 'reviews-all') {
+    var activeRadio = document.querySelector('[name="reviews"][value="' + activeFilter + '"]');
+    //var radioToBeChecked = markParent.querySelector('[name="reviews"][value="' + activeFilter + '"]');
+    activeRadio.setAttribute('checked', '');
+  }
 
   // Отлов события активации фильтров
   var filters = document.querySelector('.reviews-filter');
@@ -123,7 +129,9 @@
 
     currentPage = 0;
     renderReviews(filteredReviews, currentPage, true);
+
     activeFilter = id;
+    localStorage.setItem('active-filter', id);
   }
 
   /**
