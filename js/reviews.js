@@ -21,13 +21,7 @@
   var PAGE_SIZE = 3;
 
   /** @type {string} Активный фильтр. Изначально показываются все отзывы. */
-  var activeFilter = localStorage.getItem('active-filter') || 'reviews-all';
-
-  if (activeFilter !== 'reviews-all') {
-    var activeRadio = document.querySelector('[name="reviews"][value="' + activeFilter + '"]');
-    //var radioToBeChecked = markParent.querySelector('[name="reviews"][value="' + activeFilter + '"]');
-    activeRadio.setAttribute('checked', '');
-  }
+  var activeFilter;
 
   // Отлов события активации фильтров
   var filters = document.querySelector('.reviews-filter');
@@ -76,12 +70,12 @@
 
   /**
   * Активация фильтра.
-  * @param {number} id
+  * @param {string} id
   */
   function setActiveFilter(id) {
-    if (activeFilter === id) {
-      return;
-    }
+    // if (activeFilter === id) {
+    //   return;
+    // }
 
     filteredReviews = reviews.slice(0);
     moreButton.classList.remove('invisible');
@@ -156,8 +150,17 @@
       filteredReviews = reviews.slice(0);
       // Удаляем класс для прелоадера
       reviewsBlock.classList.remove('reviews-list-loading');
+
       // Обработка загруженных данных
-      renderReviews(filteredReviews, currentPage);
+     if (localStorage.getItem('active-filter')) {
+       activeFilter = localStorage.getItem('active-filter');
+       var filterFromStorage = document.getElementById(activeFilter);
+       filterFromStorage.setAttribute('checked', '');
+       setActiveFilter(activeFilter);
+     } else {
+       activeFilter = 'reviews-all';
+       renderReviews(filteredReviews, currentPage);
+     }
       // Показываем кнопку "еще отзывы" и ставим на неё обработчик
       moreButton.classList.remove('invisible');
       moreButton.addEventListener('click', addMoreReviews);
