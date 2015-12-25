@@ -152,15 +152,15 @@
       reviewsBlock.classList.remove('reviews-list-loading');
 
       // Обработка загруженных данных
-     if (localStorage.getItem('active-filter')) {
-       activeFilter = localStorage.getItem('active-filter');
-       var filterFromStorage = document.getElementById(activeFilter);
-       filterFromStorage.setAttribute('checked', '');
-       setActiveFilter(activeFilter);
-     } else {
-       activeFilter = 'reviews-all';
-       renderReviews(filteredReviews, currentPage);
-     }
+      if (localStorage.getItem('active-filter')) {
+        activeFilter = localStorage.getItem('active-filter');
+        var filterFromStorage = document.getElementById(activeFilter);
+        filterFromStorage.setAttribute('checked', '');
+        setActiveFilter(activeFilter);
+      } else {
+        activeFilter = 'reviews-all';
+        renderReviews(filteredReviews, currentPage);
+      }
       // Показываем кнопку "еще отзывы" и ставим на неё обработчик
       moreButton.classList.remove('invisible');
       moreButton.addEventListener('click', addMoreReviews);
