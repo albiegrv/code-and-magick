@@ -40,6 +40,8 @@
   Gallery.prototype.hide = function() {
     // Прячем галерею
     this.element.classList.add('invisible');
+    // Чистим адресную строку
+    location.hash = '';
     // Убираем обработчики
     this._closeButton.removeEventListener('click', this._onCloseClick);
     window.removeEventListener('keydown', this._onDocumentKeyDown);
@@ -101,9 +103,9 @@
   /**
    * Метод берёт фотографию с переданным индексом из массива фотографий
    * и отрисовываёт её в галерее.
-   * @param {number} number
+   * @param {number|string} data
    */
-  Gallery.prototype.setCurrentPicture = function(number) {
+  Gallery.prototype.setCurrentPicture = function(data) {
     var photos = this._photos;
     var preview = document.querySelector('.overlay-gallery-preview');
     var currentImage = preview.querySelector('img');
@@ -115,16 +117,32 @@
       preview.removeChild(currentImage);
     }
 
-    this._currentPhotoNumber = number;
-
     image.width = 300;
     image.height = 300;
     image.alt = 'screenshot';
-    image.src = photos[number]._src;
-    preview.appendChild(image);
 
-    currentNumber.innerHTML = number + 1;
-    totalNumber.innerHTML = photos.length;
+    if (typeof data === 'number') {
+      this._currentPhotoNumber = data;
+
+      image.src = photos[data]._src;
+
+      currentNumber.innerHTML = data + 1;
+      totalNumber.innerHTML = photos.length;
+
+    } else if (typeof data === 'string') {
+
+      data = location.origin + data;
+
+      for (var i = 0; i < photos.length; i++) {
+        if (photos[i]._src === data) {
+          image.src = data;
+
+          currentNumber.innerHTML = i + 1;
+          totalNumber.innerHTML = photos.length;
+        }
+      }
+    }
+    preview.appendChild(image);
   };
 
   window.Gallery = Gallery;
