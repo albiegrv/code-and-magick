@@ -23,10 +23,10 @@
     for (var i = 0; i < photoCollection.length; i++) {
       if (clickedElement === photoCollection[i]) {
         var photoFileName = i + 1;
-        var photoAdress = '/img/screenshots/' + photoFileName + '.png';
-        var photoLink = 'photo' + photoAdress;
+        var photoAdress = 'img/screenshots/' + photoFileName + '.png';
+        var photoLink = '#photo/' + photoAdress;
         location.hash = location.hash.indexOf(photoLink) !== -1 ? '' : photoLink;
-        gallery.setCurrentPicture(photoAdress);
+        //gallery.setCurrentPicture(photoAdress);
       }
     }
   });
@@ -34,6 +34,9 @@
   var onHashChange = function() {
     var REG_EXP = /#photo\/(\S+)/;
     if (location.hash.match(REG_EXP)) {
+      var srcString = location.hash.substr(7);
+      console.log(typeof srcString);
+      gallery.setCurrentPicture(srcString);
       gallery.show();
     } else {
       gallery.hide();
